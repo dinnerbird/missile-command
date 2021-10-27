@@ -12,6 +12,7 @@ from random import randint
 import turtle as T
 FPS = 60
 # Create Classes
+
 class MissileCommand(spgl.Game):
     def __init__(self, screen_width, screen_height, background_coor, title, splash_time):
        spgl.Game.__init__(self, screen_width, screen_height, background_coor, title, splash_time)
@@ -37,9 +38,9 @@ class Terrain(spgl.Sprite):
         spgl.Sprite.__init__(self, shape, color, x, y)
     def drawTerrain(self):
         # this is really ugly but I don't know a better way at the moment.
-        
+        # just smear a line at the bottom so it looks sorta good, fuck it
         T.pencolor("dark green")
-        T.goto(-900,-200)
+        T.goto(-500,-200)
         T.width(20)
         T.pendown()
         for i in range(200):
@@ -145,7 +146,7 @@ class EnemyMissile(spgl.Sprite):
         spgl.Sprite.__init__(self, shape, color, x, y)
         self.dx = 0
         self.dy = 0
-        self.speed = 4
+        self.speed = 2
         self.size = 0.2
         self.shapesize(self.size, self.size, 0)
         self.pendown()
