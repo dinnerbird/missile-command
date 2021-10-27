@@ -8,7 +8,7 @@ import spgl
 import math
 import random
 from turtle import *
-from random import randint
+from random import choice, randint
 import turtle as T
 FPS = 60
 # Create Classes
@@ -112,8 +112,6 @@ class PlayerMissile(spgl.Sprite):
             self.shapesize(self.size, self.size, 0)
         else:
             self.destroy()
-            game.play_sound("explosion.wav")
-            
 
     def tick(self):
         if self.state == "launched":
@@ -143,6 +141,28 @@ class PlayerMissile(spgl.Sprite):
         self.state = "ready" 
         player_missiles.remove(self)  
         self.frame = 2
+
+class Starfield(spgl.Sprite):
+    def __init__(self, shape, color, x=0, y=0, width=20, height=20):
+        spgl.Sprite.__init__(shape, color, x=x, y=y, width=width, height=height)
+
+    def drawStarfield(self):
+        
+        
+        screen = Screen()
+        width, height = screen.window_width(), screen.window_height()
+        starfieldColors = ['red', 'green', 'blue', 'magenta', 'yellow', 'cyan']
+        
+        for _ in range(randint(50,70)):
+            
+            radius = 1
+            circleX = randint(radius - width//2, width//2 - radius)
+            circleY = randint(radius - height//4, height//2 - radius)
+            self.setposition(circleX, circleY)
+            self.pendown()
+            self.dot(radius * 2, choice(starfieldColors))
+            self.penup()
+
 
 class EnemyMissile(spgl.Sprite):
     def __init__(self, shape, color, x, y):
@@ -189,7 +209,7 @@ class EnemyMissile(spgl.Sprite):
             self.destroy()
 
     def destroy(self):
-        game.play_sound("explosion.wav")
+        
         self.clear()
         self.penup()
         self.goto(2000, 2000)
@@ -198,6 +218,7 @@ class EnemyMissile(spgl.Sprite):
         self.size = 0.2
         self.shapesize(self.size, self.size, 0) 
         self.state = "ready"
+        
         enemy_missiles.remove(self)    
 
     def tick(self):
@@ -235,7 +256,7 @@ enemy_missiles_storage = []
 enemy_missiles = []
 
 for i in range(6):
-    cities.append(City("square", "lime", -250 + (i * 100), -250))
+    cities.append(City("square", "deep sky blue", -250 + (i * 100), -250))
 
 for i in range(3):
     silos.append(Silo("square", "dark green", -350 + (i * 350), -225))
@@ -247,13 +268,15 @@ for i in range(30):
         x = 0
     else:
         x = 350
-    player_missiles_storage.append(PlayerMissile("circle", "lime", x, -225))
+    playerColors = ['red', 'green', 'blue', 'magenta', 'yellow', 'cyan']
+
+    player_missiles_storage.append(PlayerMissile("circle", random.choices(playerColors), x, -225))
 
 for player_missile in player_missiles_storage:
     player_missiles.append(player_missile)
 
 for i in range(30):
-    enemyColors = ["forest green", "green", "lime", "lime green", "lawn green", "chartreuse"]
+    enemyColors = ['red', 'green', 'blue', 'magenta', 'yellow', 'cyan']
     enemy_missiles_storage.append(EnemyMissile("circle", random.choices(enemyColors), random.randint(-450, 450), random.randint(400, 800)))
 
 for enemy_missile in enemy_missiles_storage:
@@ -269,10 +292,10 @@ status_label = spgl.Label("Missile Command  \nLevel: {}  \nScore: {}  \nCities: 
 
 # Set Keyboard Bindings
 Terrain.drawTerrain(T)
+Starfield.drawStarfield(T)
 while True:
     # Call the game tick method
     game.tick()
-    
     # Check to see if the player missile collides with the enemy missiles
     for player_missile in player_missiles:
         for enemy_missile in enemy_missiles:
@@ -285,7 +308,7 @@ while True:
                 if distance < radius:
                     enemy_missile.destroy()  
                     game.score += 10         
-
+                    game.play_sound("explosion.wav")
     # Check to see if the enemy missile collides with the player cities or silos (destroy the missiles there as well)
     for enemy_missile in enemy_missiles:
         for city in cities:
