@@ -89,6 +89,7 @@ class PlayerMissile(spgl.Sprite):
 
     def set_target(self, target_x, target_y):
         if self.state == "ready":
+            game.play_sound("shoot.wav")
             self.target_x = target_x
             self.target_y = target_y
             
@@ -111,6 +112,8 @@ class PlayerMissile(spgl.Sprite):
             self.shapesize(self.size, self.size, 0)
         else:
             self.destroy()
+            game.play_sound("explosion.wav")
+            
 
     def tick(self):
         if self.state == "launched":
@@ -186,6 +189,7 @@ class EnemyMissile(spgl.Sprite):
             self.destroy()
 
     def destroy(self):
+        game.play_sound("explosion.wav")
         self.clear()
         self.penup()
         self.goto(2000, 2000)
@@ -291,6 +295,7 @@ while True:
                 b=enemy_missile.ycor()-city.ycor()
                 distance = math.sqrt((a**2) + (b**2))
                 if distance < radius:
+                    game.play_sound("silo_boom.wav")
                     city.destroy()    
                     cities.remove(city)   
 
@@ -301,6 +306,7 @@ while True:
                 b=enemy_missile.ycor()-silo.ycor()
                 distance = math.sqrt((a**2) + (b**2))
                 if distance < radius:
+                    game.play_sound("silo_boom.wav")
                     silo.destroy()
 
                 for player_missile in player_missiles:
@@ -309,7 +315,7 @@ while True:
                     distance = math.sqrt((a**2) + (b**2))
                     if distance < radius:
                         player_missile.destroy()
-
+                        game.play_sound("explosion.wav")
     # Check to see how many enemy missiles remain in this level
     if len(enemy_missiles) < 1:
 
@@ -319,17 +325,27 @@ while True:
         missile_bonus = 10 * len(player_missiles)      
 
         game.score += (city_bonus + silo_bonus + missile_bonus)
-
+        # these two print statements are just debug information.
+        # If you can even call it that
         print("Level {} Complete".format(game.level))
         print("City Bonus: {}  Silo Bonus: {}  Missile Bonus: {}".format(city_bonus, silo_bonus, missile_bonus))
+        print("Cities left:")
+        print(len(cities))
         game.level += 1
 
         # Reset enemy missiles
+
+        # I'm the smartest programmer that's ever lived
         for enemy_missile in enemy_missiles_storage:
             if len(enemy_missiles) < game.level:
-                enemy_missile.set_target(random.choice(cities + silos))
-                enemy_missiles.append(enemy_missile) 
-
+                if len(cities) != 0:
+                    enemy_missile.set_target(random.choice(cities + silos))
+                    enemy_missiles.append(enemy_missile) 
+                else:
+                    # Now watch this, this'll blow your fuckin mind
+                    game.play_sound("sad.wav")
+                    game.show_warning("Missile Command", "Game over man!")        
+                    game.exit()
         # Reset player missiles
         for player_missile in player_missiles:
             player_missile.destroy()
@@ -353,7 +369,8 @@ while True:
             player_missiles[i].shapesize(0.2, 0.2, 0)
             player_missiles[i].clear()
 
-    
+#    if len(enemy_missiles) == 0:
+# gonna keep this bad boy here temporarily.        
 
     # Update status label
     status_label.update("Missile Command  \nLevel: {}  \nScore: {}  \nCities: {}  \nSilos: {}  \nPlayer Missiles: {}  \nEnemy Missiles: {}".format(game.level, game.score, len(cities), len(silos), len(player_missiles), len(enemy_missiles)))                     
