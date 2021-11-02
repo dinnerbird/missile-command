@@ -1,9 +1,22 @@
 # Missile Command Clone by /u/wynand1004 AKA @TokyoEdTech
 # Requires SPGL Version 0.8 or Above
 
-# Fork by Alex Helton and Cole Snodgrass
-
+# Explodey Shooty Kablooey Turbo 3 by Alex Helton and Cole Snodgrass
+# This code is property of (and a joint venture between) Opossum Systems and Koala Industries
 # Import SPGL
+
+# Dear programmer:
+# When I wrote this code, only god and
+# I knew how it worked.
+# Now, only god knows it!
+#
+# Therefore, if you are trying to optimize
+# this routine and it fails (most surely),
+# please increase this counter as a
+# warning for the next person:
+#
+# total hours wasted here = 12
+
 import spgl
 import math
 import random
@@ -143,6 +156,7 @@ class PlayerMissile(spgl.Sprite):
         self.frame = 2
 
 class Starfield(spgl.Sprite):
+    # create random dots with pretty colors, the kids like to see colors in their vidjagames
     def __init__(self, shape, color, x=0, y=0, width=20, height=20):
         spgl.Sprite.__init__(shape, color, x=x, y=y, width=width, height=height)
 
@@ -190,6 +204,7 @@ class EnemyMissile(spgl.Sprite):
 
         self.dx = self.xcor() - target.xcor()
         # Avoid divide by 0 error
+        # better not blow up the universe this way
         if self.dx == 0:  
             self.dx = 0.01
         self.dy = self.ycor() - target.ycor()
@@ -236,14 +251,18 @@ class EnemyMissile(spgl.Sprite):
 
         if self.state == "explode":
             self.explode()
+            # The Explodey has been Kablooeyed by the Shooty
 
 # Create Functions
 
 # Initial Game setup
-game = MissileCommand(800, 600, "black", "Missile Command", 5)
+game = MissileCommand(800, 600, "black", "Explodey Shooty Kablooey Turbo 3", 5)
 game.score = 0
 
-# Create Sprites
+# The thing about these arrays is that they're stored as these funky objects and not necessarily a number.
+# When looking up the number of "Funky Objects" in this array, use len()!
+
+# Create sprites
 cities = []
 silos = []
 # Hold all player missiles
@@ -285,15 +304,18 @@ for enemy_missile in enemy_missiles_storage:
         enemy_missiles.append(enemy_missile)
 
 
-# Create Labels
-status_label = spgl.Label("Missile Command  \nLevel: {}  \nScore: {}  \nCities: {}  \nSilos: {}  \nPlayer Missiles: {}  \nEnemy Missiles: {}", "lime", -390, 160, font_name="OCR A Extended")
+# This creates a label to be later formatted "properly" below. :(
 
-# Create Buttons
+status_label = spgl.Label("Explodey Shooty Kablooey Turbo 3  \nLevel: {}  \nScore: {}  \nCities: {}  \nSilos: {}  \nPlayer Missiles: {}  \nEnemy Missiles: {}", "lime", -390, 130, font_name="OCR A Extended")
 
-# Set Keyboard Bindings
-Terrain.drawTerrain(T)
-Starfield.drawStarfield(T)
+Terrain.drawTerrain(T) # draws the green smear
+Starfield.drawStarfield(T) # draws that fancy starfield
+# ^^ You know how long that took me to figure out?
+# Turtles, man...
+
 while True:
+    status_label.update("Explodey Shooty Kablooey Turbo 3\nCopyright 1981 Opossum Systems\nLevel: {}  \nScore: {}  \nCities: {}  \nSilos: {}  \nPlayer Missiles: {}  \nEnemy Missiles: {}".format(game.level, game.score, len(cities), len(silos), len(player_missiles), len(enemy_missiles)))     
+
     # Call the game tick method
     game.tick()
     # Check to see if the player missile collides with the enemy missiles
@@ -351,9 +373,8 @@ while True:
         # these two print statements are just debug information.
         # If you can even call it that
         print("Level {} Complete".format(game.level))
-        print("City Bonus: {}  Silo Bonus: {}  Missile Bonus: {}".format(city_bonus, silo_bonus, missile_bonus))
-        print("Cities left:")
-        print(len(cities))
+        print("City Bonus: {}  Silo Bonus: {}  Missile Bonus: {}  Cities Left: {}".format(city_bonus, silo_bonus, missile_bonus, len(cities)))
+        
         game.level += 1
 
         # Reset enemy missiles
@@ -367,7 +388,7 @@ while True:
                 else:
                     # Now watch this, this'll blow your fuckin mind
                     game.play_sound("sad.wav")
-                    game.show_warning("Missile Command", "Game over man!")        
+                    game.show_warning("Explodey Shooty Kablooey Turbo 3", "Game over man!")        
                     game.exit()
         # Reset player missiles
         for player_missile in player_missiles:
@@ -392,8 +413,4 @@ while True:
             player_missiles[i].shapesize(0.2, 0.2, 0)
             player_missiles[i].clear()
 
-#    if len(enemy_missiles) == 0:
-# gonna keep this bad boy here temporarily.        
-
-    # Update status label
-    status_label.update("Missile Command  \nLevel: {}  \nScore: {}  \nCities: {}  \nSilos: {}  \nPlayer Missiles: {}  \nEnemy Missiles: {}".format(game.level, game.score, len(cities), len(silos), len(player_missiles), len(enemy_missiles)))                     
+# That's all she wrote
